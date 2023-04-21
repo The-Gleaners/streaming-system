@@ -1,0 +1,16 @@
+description = "Trigger API Module"
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+}
+
+test {
+    useJUnitPlatform()
+}

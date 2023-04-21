@@ -1,0 +1,6 @@
+rootProject.name = 'streaming-system'
+include 'downloader'
+include 'trigger'
+include 'proccessor'
+include 'loader'
+
