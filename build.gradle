@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "io.gleaners"
+    group = "gleaners"
     version = "1.0-SNAPSHOT"
     java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -23,5 +23,11 @@ subprojects {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.springframework.boot:spring-boot-starter-webflux")
+        implementation("io.projectreactor.kafka:reactor-kafka")
+
+        compileOnly("org.projectlombok:lombok:1.18.20")
+        annotationProcessor("org.projectlombok:lombok:1.18.20")
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 }
