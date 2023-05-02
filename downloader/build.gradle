@@ -1,15 +1,27 @@
 description = "Data Download Module"
 
 bootJar {
-    enabled = false
+    enabled = true
 }
 
 jar {
     enabled = true
 }
 
+ext {
+    awaitilityVersion = "4.2.0"
+}
+
 dependencies {
-    testImplementation 'io.projectreactor:reactor-test'
+    implementation "org.springframework.kafka:spring-kafka"
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
+
+
+    testImplementation "io.projectreactor:reactor-test"
+    testImplementation "org.springframework.kafka:spring-kafka-test"
+    testImplementation("org.awaitility:awaitility:$awaitilityVersion") {
+        exclude group: 'org.hamcrest'
+    }
 }
 
 test {
