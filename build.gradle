@@ -23,5 +23,11 @@ subprojects {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.springframework.boot:spring-boot-starter-webflux")
+        implementation("io.projectreactor.kafka:reactor-kafka")
+
+        compileOnly("org.projectlombok:lombok:1.18.20")
+        annotationProcessor("org.projectlombok:lombok:1.18.20")
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 }
