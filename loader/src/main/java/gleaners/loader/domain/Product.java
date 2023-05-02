@@ -1,4 +1,4 @@
 package gleaners.loader.domain;
 
-public class Ep {
+public class Product {
 }
