@@ -1,0 +1,67 @@
+####################################################################################################
+## 공용
+####################################################################################################
+spring:
+  profiles:
+    active: local
+  application:
+    name: downloader
+
+server:
+  port: 8880
+
+
+---
+####################################################################################################
+## local
+####################################################################################################
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  kafka:
+    topic: test
+    bootstrap-servers: localhost:9092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: -1
+
+    consumer:
+      group-id: reactive_consumer_group
+      enable-auto-commit: false
+      auto-commit-interval: 10
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            use:
+              type:
+                headers: false
+            value:
+              default:
+                type: gleaners.domain.DownloadTarget
+
+---
+
+####################################################################################################
+## dev
+####################################################################################################
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+
+####################################################################################################
+## live
+####################################################################################################
+spring:
+  config:
+    activate:
+      on-profile: prod

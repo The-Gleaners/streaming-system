@@ -1,17 +1,37 @@
 description = "Data Download Module"
 
 bootJar {
-    enabled = false
+    enabled = true
 }
 
 jar {
     enabled = true
 }
 
+ext {
+    awaitilityVersion = "4.2.0"
+}
+
 dependencies {
-    testImplementation 'io.projectreactor:reactor-test'
+    implementation "org.springframework.kafka:spring-kafka"
+
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.11.0'
+    testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.8.RELEASE'
+    testImplementation "io.projectreactor:reactor-test"
+    testImplementation "org.springframework.kafka:spring-kafka-test"
+    testImplementation("org.awaitility:awaitility:$awaitilityVersion") {
+        exclude group: 'org.hamcrest'
+    }
 }
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(Test).configureEach {
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
+        jvmArgs += [
+                "-XX:+AllowRedefinitionToAddDeleteMethods"
+        ]
+    }
 }

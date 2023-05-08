@@ -41,7 +41,7 @@ out/
 
 ### log ###
 **/log/
-application.yml
+!**/resource/application.yml
 
 ### test sample data ###
 **/src/test/**/sample/
