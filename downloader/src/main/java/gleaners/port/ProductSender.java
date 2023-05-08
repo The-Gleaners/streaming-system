@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @Component
 @RequiredArgsConstructor
-public class KafkaSender {
+public class ProductSender {
     private final ReactiveKafkaProducerTemplate<Integer, String> downloadSender;
 
     public void send(Product product) {

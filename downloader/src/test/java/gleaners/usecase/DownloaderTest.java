@@ -14,7 +14,7 @@ class DownloaderTest {
 
         DownloadTarget downloadTarget = new DownloadTarget("http://httpstat.us/200");
 
-        StepVerifier.create(downloader.response(downloadTarget))
+        StepVerifier.create(downloader.extractLineByDelimiter(downloadTarget))
             .thenConsumeWhile(response -> response.contains("200 OK"))
             .verifyComplete();
     }

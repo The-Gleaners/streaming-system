@@ -14,9 +14,9 @@ ext {
 
 dependencies {
     implementation "org.springframework.kafka:spring-kafka"
-    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 
-
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.11.0'
+    testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.8.RELEASE'
     testImplementation "io.projectreactor:reactor-test"
     testImplementation "org.springframework.kafka:spring-kafka-test"
     testImplementation("org.awaitility:awaitility:$awaitilityVersion") {
@@ -26,4 +26,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(Test).configureEach {
+    if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
+        jvmArgs += [
+                "-XX:+AllowRedefinitionToAddDeleteMethods"
+        ]
+    }
 }

@@ -21,7 +21,7 @@ public class Downloader {
         .clientConnector(generateConnector())
         .build();
 
-    public Flux<String> response(DownloadTarget requestTargetUrl) {
+    public Flux<String> extractLineByDelimiter(DownloadTarget requestTargetUrl) {
         return download(requestTargetUrl)
             .map(lines -> lines.split(DELIMITER))
             .flatMapMany(Flux::fromArray);

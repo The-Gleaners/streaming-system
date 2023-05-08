@@ -37,9 +37,9 @@ public class ReactiveKafkaIntegrationTests {
     private static final long DEFAULT_TIMESTAMP = Instant.now().toEpochMilli();
     private static final Duration DEFAULT_VERIFY_TIMEOUT = Duration.ofSeconds(10);
 
-    private static ReactiveKafkaConsumerTemplate<Integer, String> reactiveKafkaConsumerTemplate;
+    protected static ReactiveKafkaConsumerTemplate<Integer, String> reactiveKafkaConsumerTemplate;
 
-    private ReactiveKafkaProducerTemplate<Integer, String> reactiveKafkaProducerTemplate;
+    protected ReactiveKafkaProducerTemplate<Integer, String> reactiveKafkaProducerTemplate;
 
     @BeforeAll
     public static void setUpBeforeClass() {
@@ -54,25 +54,6 @@ public class ReactiveKafkaIntegrationTests {
         this.reactiveKafkaProducerTemplate = new ReactiveKafkaProducerTemplate<>(setupSenderOptionsWithDefaultTopic(),
             new MessagingMessageConverter());
     }
-
-    @Test
-    public void shouldSendSingleRecordAsKeyAndReceiveIt() {
-        Mono<SenderResult<Void>> senderResultMono =
-            this.reactiveKafkaProducerTemplate.send(REACTIVE_INT_KEY_TOPIC, DEFAULT_VALUE);
-
-        StepVerifier.create(senderResultMono)
-            .assertNext(senderResult -> {
-                assertEquals(senderResult.recordMetadata().topic(), REACTIVE_INT_KEY_TOPIC);
-            })
-            .expectComplete()
-            .verify(DEFAULT_VERIFY_TIMEOUT);
-
-        StepVerifier.create(reactiveKafkaConsumerTemplate.receive().doOnNext(rr -> rr.receiverOffset().acknowledge()))
-            .assertNext(receiverRecord -> assertEquals(receiverRecord.value(), DEFAULT_VALUE))
-            .thenCancel()
-            .verify(DEFAULT_VERIFY_TIMEOUT);
-    }
-
 
     private static ReceiverOptions<Integer, String> setupReceiverOptionsWithDefaultTopic(
         Map<String, Object> consumerProps) {

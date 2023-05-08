@@ -24,10 +24,12 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.springframework.boot:spring-boot-starter-webflux")
         implementation("io.projectreactor.kafka:reactor-kafka")
+        implementation("io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64")
 
         compileOnly("org.projectlombok:lombok:1.18.20")
         annotationProcessor("org.projectlombok:lombok:1.18.20")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.projectlombok:lombok:1.18.20")
     }
 }

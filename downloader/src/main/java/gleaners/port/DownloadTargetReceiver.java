@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 
 @Log4j2
 @Component
-public class KafkaReceiver {
+public class DownloadTargetReceiver {
 
     private static final int MAX_ATTEMPTS = 3;
     private static final Duration MIN_BACKOFF = Duration.ofSeconds(2);
@@ -24,7 +24,7 @@ public class KafkaReceiver {
     private final ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver;
     private final DownloadTask downloadTask;
 
-    public KafkaReceiver(ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver, DownloadTask downloadTask) {
+    public DownloadTargetReceiver(ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver, DownloadTask downloadTask) {
         this.receiver = receiver;
         this.downloadTask = downloadTask;
 
