@@ -1,5 +1,6 @@
 package gleaners.usecase;
 
+import org.springframework.http.HttpHeaders;
 import gleaners.domain.DownloadTarget;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -11,7 +12,6 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.net.URI;
-
 
 @Component
 public class Downloader {
@@ -27,11 +27,19 @@ public class Downloader {
             .flatMapMany(Flux::fromArray);
     }
 
-    private Mono<String> download(DownloadTarget requestTargetUrl) {
-        return client.get()
-            .uri(URI.create(requestTargetUrl.url()))
-            .accept(MediaType.ALL)
-            .exchangeToMono(this::validate);
+    private Mono<String> download(DownloadTarget requestTarget) {
+        if(requestTarget.token() == null) {
+            return client.get()
+                .uri(URI.create(requestTarget.url()))
+                .accept(MediaType.ALL)
+                .exchangeToMono(this::validate);
+        } else {
+            return client.get()
+                .uri(URI.create(requestTarget.url()))
+                .header(HttpHeaders.AUTHORIZATION, requestTarget.token())
+                .accept(MediaType.ALL)
+                .exchangeToMono(this::validate);
+        }
     }
 
     private Mono<String> validate(ClientResponse response) {
@@ -45,5 +53,4 @@ public class Downloader {
     private ReactorClientHttpConnector generateConnector() {
         return new ReactorClientHttpConnector(HttpClient.create().followRedirect(true));
     }
-
 }
