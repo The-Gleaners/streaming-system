@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import reactor.blockhound.BlockHound;
-import reactor.test.StepVerifier;
 
 import java.io.IOException;
 
@@ -52,10 +51,11 @@ class DownloadTaskTest extends ReactiveKafkaIntegrationTests {
         ProductSender productSender = new ProductSender(reactiveKafkaProducerTemplate);
 
         Downloader downloader = new Downloader();
+        Parser tsvConvertor = new Parser();
 
-        DownloadTask downloadTask = new DownloadTask(productSender, downloader);
+        DownloadTask downloadTask = new DownloadTask(productSender, downloader, tsvConvertor);
 
-        DownloadTarget downloadTarget = new DownloadTarget("https://www.naver.com");
+        DownloadTarget downloadTarget = new DownloadTarget("https://korea-ne-wmf-ep-production.s3.ap-northeast-2.amazonaws.com/89f4a4733fd21df33816e84e97d8eb40/ep_total.tsv");
 
 
         downloadTask

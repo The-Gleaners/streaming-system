@@ -1,7 +1,6 @@
 package gleaners.usecase;
 
 import gleaners.domain.DownloadTarget;
-import gleaners.domain.Product;
 import gleaners.port.ProductSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,10 +12,18 @@ import org.springframework.stereotype.Component;
 public class DownloadTask {
     private final ProductSender sender;
     private final Downloader downloader;
+    private final Parser parser;
 
     public void downloadAndSend(DownloadTarget targetUrl) {
         downloader.extractLineByDelimiter(targetUrl)
-            .map(Product::new)
+            .mapNotNull(line -> {
+                if(parser.isEmptyFieldList()) {
+                    parser.setFieldKey(line);
+                    return null;
+                } else {
+                    return parser.produceProduct(line);
+                }
+            })
             .subscribe(sender::send);
     }
 }
