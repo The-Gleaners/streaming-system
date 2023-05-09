@@ -12,7 +12,7 @@ class DownloaderTest {
     void downloadServiceTest() {
         Downloader downloader = new Downloader();
 
-        DownloadTarget downloadTarget = new DownloadTarget("http://httpstat.us/200");
+        DownloadTarget downloadTarget = new DownloadTarget("http://httpstat.us/200", null);
 
         StepVerifier.create(downloader.extractLineByDelimiter(downloadTarget))
             .thenConsumeWhile(response -> response.contains("200 OK"))
