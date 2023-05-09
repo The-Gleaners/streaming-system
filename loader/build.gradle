@@ -1,8 +1,5 @@
 description = "Data load Module"
 
-group 'gleaners.loader'
-version '1.0-SNAPSHOT'
-
 bootJar {
     enabled = false
 }
@@ -18,11 +15,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'      // MongoDB를 임베드하여 테스트할 수 있도록 지원하는 의존성
-    testImplementation 'io.projectreactor:reactor-test'                     // Reactor를 사용한 애플리케이션을 테스트할 수 있는 도구가 포함된 의존성
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3'    // MongoDB를 임베드하여 테스트할 수 있도록 지원하는 의존성
+    testImplementation 'io.projectreactor:reactor-test'                         // Reactor를 사용한 애플리케이션을 테스트할 수 있는 도구가 포함된 의존성
 }
 
 test {
