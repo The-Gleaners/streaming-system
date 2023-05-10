@@ -28,17 +28,10 @@ public class Downloader {
     }
 
     private Mono<String> download(DownloadTarget requestTarget) {
-        if(requestTarget.token() == null) {
-            return client.get()
-                .uri(URI.create(requestTarget.url()))
-                .accept(MediaType.ALL)
-                .exchangeToMono(this::validate);
+        if(requestTarget.token() != null) {
+            return tokenRequest(requestTarget);
         } else {
-            return client.get()
-                .uri(URI.create(requestTarget.url()))
-                .header(HttpHeaders.AUTHORIZATION, requestTarget.token())
-                .accept(MediaType.ALL)
-                .exchangeToMono(this::validate);
+            return normalRequest(requestTarget);
         }
     }
 
@@ -52,5 +45,20 @@ public class Downloader {
 
     private ReactorClientHttpConnector generateConnector() {
         return new ReactorClientHttpConnector(HttpClient.create().followRedirect(true));
+    }
+
+    private Mono<String> tokenRequest(DownloadTarget requestTarget) {
+        return client.get()
+            .uri(URI.create(requestTarget.url()))
+            .accept(MediaType.ALL)
+            .exchangeToMono(this::validate);
+    }
+
+    private Mono<String> normalRequest(DownloadTarget requestTarget) {
+        return client.get()
+            .uri(URI.create(requestTarget.url()))
+            .header(HttpHeaders.AUTHORIZATION, requestTarget.token())
+            .accept(MediaType.ALL)
+            .exchangeToMono(this::validate);
     }
 }
