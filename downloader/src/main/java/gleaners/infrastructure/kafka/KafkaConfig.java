@@ -45,12 +45,12 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> downloadTargetReceiver() {
+    public ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver() {
         return new ReactiveKafkaConsumerTemplate<>(setupReceiverOptions(properties));
     }
 
     @Bean
-    public ReactiveKafkaProducerTemplate<Integer, String> productSender() {
+    public ReactiveKafkaProducerTemplate<Integer, String> sender() {
         return new ReactiveKafkaProducerTemplate<>(setupSenderOptions(properties));
     }
 }
