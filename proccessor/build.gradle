@@ -9,6 +9,11 @@ jar {
 }
 
 dependencies {
+    implementation 'io.projectreactor.kafka:reactor-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
 
 test {
