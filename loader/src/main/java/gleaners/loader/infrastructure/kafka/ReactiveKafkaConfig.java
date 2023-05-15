@@ -12,6 +12,7 @@ import reactor.kafka.receiver.ReceiverOptions;
 
 import java.util.Collections;
 import java.util.Map;
+
 @Log4j2
 @Configuration
 @RequiredArgsConstructor
@@ -36,4 +37,5 @@ public class ReactiveKafkaConfig {
     public ReactiveKafkaConsumerTemplate<String, LoaderTarget> loaderTargetReceiver() {
         return new ReactiveKafkaConsumerTemplate<>(setupReceiverOptions(properties));
     }
+
 }

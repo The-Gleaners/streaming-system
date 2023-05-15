@@ -33,14 +33,12 @@ public class ReactiveKafkaConsumer {
 
     public void start() {
         reactiveKafkaConsumerTemplate.receive()
-                .doOnNext(processReceiveMessage())
+                .doOnNext(message -> saveToMongo(message).subscribe())
                 .doOnError(log::error)
                 .retryWhen(Retry.backoff(MAX_ATTEMPTS, MIN_BACKOFF)
                         .transientErrors(true))
                 .onErrorResume(this::handleOnError)
                 .repeat()
-                .doOnNext(message -> saveToMongo(message).subscribe())
-//                .doOnNext(this::saveToMongo)
                 .subscribe();
     }
 
@@ -56,33 +54,23 @@ public class ReactiveKafkaConsumer {
         return Mono.empty();
     }
 
-    private Consumer<ReceiverRecord<String, LoaderTarget>> processReceiveMessage() {
-        return receiverRecord -> {
-            ReceiverOffset offset = receiverRecord.receiverOffset();
-
-            //TODO : 향후 사용 예정
-            //Instant timestamp = Instant.ofEpochMilli(record.timestamp());
-
-            offset.acknowledge();
-
-            log.info("Received message: topic-partition={} offset={} key={} value={}\n",
-                    offset.topicPartition(),
-                    offset.offset(),
-                    receiverRecord.key(),
-                    receiverRecord.value());
-        };
-    }
-
     private Mono<LoaderTarget> saveToMongo(ReceiverRecord<String, LoaderTarget> message) {
-      return  loaderTargetRepository.save(message.value())
+        return loaderTargetRepository.save(message.value())
                 .doOnSuccess(
-                        success ->
-                                log.info("Saved message: key={} value={} \n",
-                                        success.id(),
-                                        success.value())
-                )
+                        success -> {
+                            log.info("Saved message: key={} value={} \n",
+                                    success.id(),
+                                    success.value());
+
+                            message.receiverOffset().acknowledge();
+
+                            log.info("Received message: topic-partition={} offset={} \n",
+                                    message.receiverOffset().topicPartition(),
+                                    message.receiverOffset().offset());
+                        })
                 .doOnError(
                         error -> log.info(error.getMessage())
                 );
     }
+
 }
