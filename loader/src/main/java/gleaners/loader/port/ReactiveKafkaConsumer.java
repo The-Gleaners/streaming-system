@@ -7,12 +7,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-import reactor.kafka.receiver.ReceiverOffset;
 import reactor.kafka.receiver.ReceiverRecord;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
-import java.util.function.Consumer;
 
 @Log4j2
 @Component
