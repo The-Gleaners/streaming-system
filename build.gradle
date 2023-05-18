@@ -1,5 +1,19 @@
 import org.ajoberstar.grgit.Grgit
 
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        mavenLocal()
+        maven {
+            url = uri("https://packages.confluent.io/maven/")
+        }
+    }
+
+    dependencies {
+        classpath("com.github.imflog:kafka-schema-registry-gradle-plugin:1.11.0")
+    }
+}
+
 plugins {
     id("org.springframework.boot") version "3.0.4" apply false
     id("io.spring.dependency-management") version "1.1.0" apply false
@@ -59,6 +73,7 @@ subprojects {
     dockerCompose {
         kafkaStack {
             executable = '/usr/local/bin/docker-compose-v1'
+            dockerExecutable = '/usr/local/bin/docker'
             dockerComposeWorkingDirectory = project.file("$rootDir")
 
             stopContainers = false
@@ -73,6 +88,7 @@ subprojects {
 
         mongoDBStack {
             executable = '/usr/local/bin/docker-compose-v1'
+            dockerExecutable = '/usr/local/bin/docker'
             dockerComposeWorkingDirectory = project.file("$rootDir")
 
             stopContainers = false
