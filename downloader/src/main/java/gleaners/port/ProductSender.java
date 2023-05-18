@@ -13,9 +13,11 @@ public class ProductSender {
     private final ReactiveKafkaProducerTemplate<Integer, String> downloadSender;
 
     public void send(Product product) {
+        System.out.println("Product : " + product);
+        /*
         downloadSender.send("test-after-download", product.toString())
             .doOnSuccess(senderResult ->
                     log.info("send : {} \n offset : {}", product, senderResult.recordMetadata().offset()))
-            .subscribe();
+            .subscribe();*/
     }
 }

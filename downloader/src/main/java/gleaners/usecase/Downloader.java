@@ -39,7 +39,6 @@ public class Downloader {
         if(response.statusCode().isError()) {
             return Mono.empty();
         }
-
         return response.bodyToMono(String.class);
     }
 
