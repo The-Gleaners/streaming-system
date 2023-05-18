@@ -1,6 +1,6 @@
 package gleaners.usecase;
 
-
+import gleaners.avro.DownloadTarget;
 import gleaners.avro.DownloadTarget;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,53 +14,71 @@ import reactor.netty.http.client.HttpClient;
 
 import java.net.URI;
 
-
 @Component
 public class Downloader {
     private static final String DELIMITER = "\\n";
+    private static final long NO_CONTENT_LENGTH = -1L;
 
     private final WebClient client = WebClient.builder()
         .clientConnector(generateConnector())
         .build();
 
-    public Flux<String> extractLineByDelimiter(DownloadTarget requestTargetUrl) {
-        return download(requestTargetUrl)
+    public Flux<String> extractLineByDelimiter(DownloadTarget downloadTarget) {
+        return download(downloadTarget)
             .map(lines -> lines.split(DELIMITER))
             .flatMapMany(Flux::fromArray);
     }
 
-    private Mono<String> download(DownloadTarget requestTargetUrl) {
-        if(requestTargetUrl.getUrl() != null) {
-            return tokenRequest(requestTargetUrl);
+    private Mono<String> download(DownloadTarget downloadTarget) {
+        if(downloadTarget.getToken() != null) {
+            return tokenRequest(downloadTarget);
         } else {
-            return normalRequest(requestTargetUrl);
+            return normalRequest(downloadTarget);
         }
     }
 
-    private Mono<String> validate(ClientResponse response) {
-        if(response.statusCode().isError()) {
+    private Mono<String> getResponseBody(
+        ClientResponse response,
+        DownloadTarget downloadTarget) {
+
+        if(!isValidate(response, downloadTarget)) {
             return Mono.empty();
         }
-
         return response.bodyToMono(String.class);
+    }
+
+    private boolean isValidate(
+        ClientResponse response,
+        DownloadTarget downloadTarget) {
+        long fileSize = response.headers().contentLength().orElse(NO_CONTENT_LENGTH);
+
+        return isLargerAllowance(fileSize, downloadTarget)
+            && !response.statusCode().isError();
     }
 
     private ReactorClientHttpConnector generateConnector() {
         return new ReactorClientHttpConnector(HttpClient.create().followRedirect(true));
     }
 
-    private Mono<String> tokenRequest(DownloadTarget requestTarget) {
-        return client.get()
-            .uri(URI.create(requestTarget.getUrl()))
-            .accept(MediaType.ALL)
-            .exchangeToMono(this::validate);
+    private boolean isLargerAllowance(long fileSize, DownloadTarget downloadTarget) {
+        if(fileSize == -1) return true;
+        long allowanceSize = downloadTarget.getPrevFileSize() / 100 * downloadTarget.getMinAllowanceRate();
+        return fileSize > allowanceSize;
     }
 
-    private Mono<String> normalRequest(DownloadTarget requestTarget) {
+
+    private Mono<String> tokenRequest(DownloadTarget downloadTarget) {
         return client.get()
-            .uri(URI.create(requestTarget.getUrl()))
-            .header(HttpHeaders.AUTHORIZATION, requestTarget.getToken())
+            .uri(URI.create(downloadTarget.getUrl()))
             .accept(MediaType.ALL)
-            .exchangeToMono(this::validate);
+            .exchangeToMono(response -> getResponseBody(response, downloadTarget));
+    }
+
+    private Mono<String> normalRequest(DownloadTarget downloadTarget) {
+        return client.get()
+            .uri(URI.create(downloadTarget.getUrl()))
+            .header(HttpHeaders.AUTHORIZATION, downloadTarget.getToken())
+            .accept(MediaType.ALL)
+            .exchangeToMono(response -> getResponseBody(response, downloadTarget));
     }
 }
