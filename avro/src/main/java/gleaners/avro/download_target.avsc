@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "DownloadTarget",
+  "namespace": "gleaners.avro",
+  "fields": [
+    { "name": "pipeId", "type": "string" },
+    { "name": "url", "type": "string" },
+    { "name": "token", "type": "string" }
+  ]
+}

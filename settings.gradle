@@ -1,6 +1,14 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'streaming-system'
 include 'downloader'
 include 'trigger'
 include 'proccessor'
 include 'loader'
+include 'avro'
 

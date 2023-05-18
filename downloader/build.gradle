@@ -1,3 +1,9 @@
+import java.util.zip.ZipFile
+
+plugins {
+    id "com.github.davidmc24.gradle.plugin.avro" version "1.7.1"
+}
+
 description = "Data Download Module"
 
 bootJar {
@@ -12,8 +18,24 @@ ext {
     awaitilityVersion = "4.2.0"
 }
 
+configurations {
+    additionalSchema
+}
+
+generateAvroJava {
+    dependsOn configurations.additionalSchema
+    source {
+        configurations.additionalSchema.collect { zipTree(it) }
+    }
+}
+
 dependencies {
     implementation "org.springframework.kafka:spring-kafka"
+    implementation "org.apache.avro:avro:1.11.0"
+    implementation 'io.confluent:kafka-schema-registry-client:7.3.3'
+    implementation 'io.confluent:kafka-avro-serializer:7.3.3'
+
+    additionalSchema project(":avro")
 
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.11.0'
     testImplementation 'io.projectreactor.tools:blockhound-junit-platform:1.0.8.RELEASE'
@@ -34,4 +56,25 @@ tasks.withType(Test).configureEach {
                 "-XX:+AllowRedefinitionToAddDeleteMethods"
         ]
     }
+}
+
+def configureJar = tasks.register("configureJar") {
+    it.doLast {
+        tasks.jar.exclude(
+                configurations.additionalSchema
+                        .findAll { it.name.endsWith("jar") }
+                        .collect { File file ->
+                            new ZipFile(file).entries()
+                                    .findAll { it.name.endsWith(".class") }
+                                    .collect { it.name }
+                        }
+                        .flatten() as Iterable<String>
+        )
+    }
+
+    it.dependsOn(tasks.classes)
+}
+
+tasks.named("jar") {
+    it.dependsOn(configureJar)
 }

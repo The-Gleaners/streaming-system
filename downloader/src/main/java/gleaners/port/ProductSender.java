@@ -1,6 +1,6 @@
 package gleaners.port;
 
-import gleaners.domain.Product;
+import gleaners.avro.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ProductSender {
-    private final ReactiveKafkaProducerTemplate<Integer, String> downloadSender;
+    private final ReactiveKafkaProducerTemplate<String, Product> downloadSender;
 
     public void send(Product product) {
-        downloadSender.send("test-after-download", product.toString())
+        downloadSender.send("test-after-download", product)
             .doOnSuccess(senderResult ->
                     log.info("send : {} \n offset : {}", product, senderResult.recordMetadata().offset()))
             .subscribe();
