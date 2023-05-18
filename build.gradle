@@ -1,19 +1,20 @@
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        maven {
-            url = "https://packages.confluent.io/maven/"
-        }
-    }
-    dependencies {
-        classpath("com.github.imflog:kafka-schema-registry-gradle-plugin:1.11.0")
-    }
-}
+import org.ajoberstar.grgit.Grgit
 
 plugins {
     id("org.springframework.boot") version "3.0.4" apply false
     id("io.spring.dependency-management") version "1.1.0" apply false
+    id("com.avast.gradle.docker-compose") version "0.16.12" apply false
+    id ("org.ajoberstar.grgit") version "5.2.0" apply false
     id 'java'
+}
+
+ext {
+    infraGithubRepoUrl = "https://github.com/The-Gleaners/Infrastructure.git"
+    infraGithubCloneTargetDir = "$rootDir/.local-infra"
+    mongoStackPath = "local-dev-environment/mongo-stack/docker-compose.yml"
+    kafkaStackPath = "local-dev-environment/kafka-stack/docker-compose.yml"
+    localDockerComposeProjectName = "streaming-system"
+
 }
 
 allprojects {
@@ -23,8 +24,12 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven {
-            url 'https://packages.confluent.io/maven/'
+    }
+
+    afterEvaluate {
+        def dcExt = getExtensions().findByName('dockerCompose')
+        if (dcExt && dcExt.hasProperty('stopContainers')) {
+            dcExt.stopContainers = false
         }
     }
 }
@@ -33,6 +38,9 @@ subprojects {
     apply plugin: "java"
     apply plugin: "io.spring.dependency-management"
     apply plugin: "org.springframework.boot"
+    apply plugin: "org.ajoberstar.grgit"
+    apply plugin: "com.avast.gradle.docker-compose"
+
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter")
@@ -45,5 +53,52 @@ subprojects {
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("org.projectlombok:lombok:1.18.20")
+    }
+
+
+    dockerCompose {
+        kafkaStack {
+            executable = '/usr/local/bin/docker-compose-v1'
+            dockerComposeWorkingDirectory = project.file("$rootDir")
+
+            stopContainers = false
+            projectName = 'kafka_local_infra'
+            projectNamePrefix = 'kafka_stack_'
+            useComposeFiles = [
+                    "$infraGithubCloneTargetDir/$kafkaStackPath"
+            ]
+            systemProperty 'spring.profiles.active', findProperty('spring.profiles.active') ?: 'local'
+            isRequiredBy(bootRun)
+        }
+
+        mongoDBStack {
+            executable = '/usr/local/bin/docker-compose-v1'
+            dockerComposeWorkingDirectory = project.file("$rootDir")
+
+            stopContainers = false
+            projectName = 'mongo_local_infra'
+            projectNamePrefix = 'mongo_stack_'
+            useComposeFiles = [
+                    "$infraGithubCloneTargetDir/$mongoStackPath"
+            ]
+            systemProperty 'spring.profiles.active', findProperty('spring.profiles.active') ?: 'local'
+            isRequiredBy(bootRun)
+        }
+    }
+
+    task cloneInfraRepo {
+        doFirst {
+            def folderPath = "$infraGithubCloneTargetDir"
+            if (file(folderPath).exists()) {
+                delete(file(folderPath))
+            }
+        }
+
+        doLast {
+            def grgit = Grgit.clone(
+                    dir: "$infraGithubCloneTargetDir",
+                    uri: "$infraGithubRepoUrl"
+            )
+        }
     }
 }

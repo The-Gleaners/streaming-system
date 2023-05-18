@@ -71,10 +71,18 @@ def configureJar = tasks.register("configureJar") {
                         .flatten() as Iterable<String>
         )
     }
-
     it.dependsOn(tasks.classes)
 }
 
 tasks.named("jar") {
     it.dependsOn(configureJar)
+}
+
+task runDockerCompose() {
+    dependsOn cloneInfraRepo
+    dependsOn kafkaStackComposeUp
+    dependsOn mongoDBStackComposeUp
+
+    kafkaStackComposeUp.mustRunAfter cloneInfraRepo
+    mongoDBStackComposeUp.mustRunAfter cloneInfraRepo
 }

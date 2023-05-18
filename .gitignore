@@ -45,3 +45,6 @@ out/
 
 ### test sample data ###
 **/src/test/**/sample/
+
+### local-infra ###
+.local-infra/
