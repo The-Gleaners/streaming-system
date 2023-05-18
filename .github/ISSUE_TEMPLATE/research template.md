@@ -1,7 +1,10 @@
 ---
 name: 리서치 템플릿
-about:  조사할 리서치에 대한 템플릿
-labels: "research"
+about: 조사할 리서치에 대한 템플릿
+title: ''
+labels: research
+assignees: ''
+
 ---
 
 ## 배경

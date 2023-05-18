@@ -1,7 +1,10 @@
 ---
 name: 이슈 템플릿
-about:  담당할 이슈에 대한 템플릿
-labels: "feature"
+about: 담당할 이슈에 대한 템플릿
+title: ''
+labels: feature, research
+assignees: ''
+
 ---
 
 ## 배경
