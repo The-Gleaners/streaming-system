@@ -1,0 +1,67 @@
+####################################################################################################
+## 공용
+####################################################################################################
+spring:
+  profiles:
+    active: local
+  application:
+    name: loader
+
+server:
+  port: 8882
+
+
+---
+####################################################################################################
+## local
+####################################################################################################
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  kafka:
+    topic: test
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: reactive_consumer_group
+      enable-auto-commit: false
+      auto-commit-interval: 10
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            use:
+              type:
+                headers: false
+            value:
+              default:
+                type: gleaners.loader.domain.LoaderTarget
+
+  data:
+    mongodb:
+      uri: mongodb://mongo:mongo@localhost:27017/admin
+      options:
+        connectTimeout: 5000
+        serverSelectionTimeout: 5000
+---
+
+####################################################################################################
+## dev
+####################################################################################################
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+
+####################################################################################################
+## live
+####################################################################################################
+spring:
+  config:
+    activate:
+      on-profile: prod
