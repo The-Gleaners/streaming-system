@@ -1,6 +1,6 @@
 package gleaners.port;
 
-import gleaners.domain.DownloadTarget;
+import gleaners.avro.DownloadTarget;
 import gleaners.infrastructure.kafka.ReceiverRecordException;
 import gleaners.usecase.DownloadTask;
 import lombok.extern.log4j.Log4j2;

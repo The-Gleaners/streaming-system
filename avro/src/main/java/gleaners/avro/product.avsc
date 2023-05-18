@@ -1,0 +1,65 @@
+{
+	"type": "record",
+	"name": "Product",
+	"namespace": "gleaners.avro",
+	"fields": [
+		{
+			"name": "idHash",
+			"type": ["null", "string"],
+			"default": null
+		},
+		{
+			"name": "id",
+			"type": ["null", "string"],
+			"default": null
+		},
+		{
+			"name": "title",
+			"type": ["null", "string"],
+			"default": null
+		},
+		{
+			"name": "pricePc",
+			"type": "int"
+		},
+		{
+			"name": "link",
+			"type": ["null", "string"],
+			"default": null
+		},
+		{
+			"name": "imageLink",
+			"type": [
+				"null",
+				"string"
+			],
+			"default": null
+		},
+		{
+			"name": "categoryName1",
+			"type": [
+				"null",
+				"string"
+			],
+			"default": null
+		},
+		{
+			"name": "shipping",
+			"type": [
+				"null",
+				"string"
+			],
+			"default": null
+		},
+		{
+			"name": "flags",
+			"type": ["null", "string"],
+			"default": null
+		},
+		{
+			"name": "hash",
+			"type": ["null", "string"],
+			"default": null
+		}
+	]
+}

@@ -1,17 +1,20 @@
 package gleaners.infrastructure.kafka;
 
-import gleaners.domain.DownloadTarget;
-import gleaners.domain.Product;
+import gleaners.avro.DownloadTarget;
+import gleaners.avro.Product;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.subject.RecordNameStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.sender.SenderOptions;
 
@@ -37,12 +40,18 @@ public class KafkaConfig {
             .subscription(Collections.singletonList("test"));
     }
 
-    private SenderOptions<Integer, String> setupSenderOptions(KafkaProperties properties) {
+    private SenderOptions<String, Product> setupSenderOptions(KafkaProperties properties) {
         Map<String, Object> producerProps = properties.buildProducerProperties();
         producerProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        producerProps.put(AbstractKafkaSchemaSerDeConfig.VALUE_SUBJECT_NAME_STRATEGY, RecordNameStrategy.class);
+        producerProps.put(AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS, false);
+        producerProps.put(AbstractKafkaSchemaSerDeConfig.USE_LATEST_VERSION, true);
 
         return SenderOptions.create(producerProps);
     }
+
 
     @Bean
     public ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver() {
@@ -50,7 +59,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ReactiveKafkaProducerTemplate<Integer, String> sender() {
+    public ReactiveKafkaProducerTemplate<String, Product> sender() {
         return new ReactiveKafkaProducerTemplate<>(setupSenderOptions(properties));
     }
 }

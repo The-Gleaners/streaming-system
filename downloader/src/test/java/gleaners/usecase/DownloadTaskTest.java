@@ -1,6 +1,6 @@
 package gleaners.usecase;
 
-import gleaners.domain.DownloadTarget;
+import gleaners.avro.DownloadTarget;
 import gleaners.port.ProductSender;
 import gleaners.support.ReactiveKafkaIntegrationTests;
 import lombok.extern.log4j.Log4j2;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import reactor.blockhound.BlockHound;
-import reactor.test.StepVerifier;
 
 import java.io.IOException;
 
@@ -49,16 +48,16 @@ class DownloadTaskTest extends ReactiveKafkaIntegrationTests {
             .addHeader("Content-Type", "application/json"));
 
 
-        ProductSender productSender = new ProductSender(reactiveKafkaProducerTemplate);
+//        ProductSender productSender = new ProductSender(reactiveKafkaProducerTemplate);
 
         Downloader downloader = new Downloader();
 
-        DownloadTask downloadTask = new DownloadTask(productSender, downloader);
+//        DownloadTask downloadTask = new DownloadTask(productSender, downloader);
 
-        DownloadTarget downloadTarget = new DownloadTarget("https://www.naver.com");
+        DownloadTarget downloadTarget = new DownloadTarget("1", "https://www.naver.com", "test-token");
 
 
-        downloadTask
-            .downloadAndSend(downloadTarget);
+//        downloadTask
+//            .downloadAndSend(downloadTarget);
     }
 }

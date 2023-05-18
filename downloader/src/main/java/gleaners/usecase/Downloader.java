@@ -1,7 +1,8 @@
 package gleaners.usecase;
 
+
+import gleaners.avro.DownloadTarget;
 import org.springframework.http.HttpHeaders;
-import gleaners.domain.DownloadTarget;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.net.URI;
+
 
 @Component
 public class Downloader {
@@ -27,11 +29,11 @@ public class Downloader {
             .flatMapMany(Flux::fromArray);
     }
 
-    private Mono<String> download(DownloadTarget requestTarget) {
-        if(requestTarget.token() != null) {
-            return tokenRequest(requestTarget);
+    private Mono<String> download(DownloadTarget requestTargetUrl) {
+        if(requestTargetUrl.getUrl() != null) {
+            return tokenRequest(requestTargetUrl);
         } else {
-            return normalRequest(requestTarget);
+            return normalRequest(requestTargetUrl);
         }
     }
 
@@ -49,15 +51,15 @@ public class Downloader {
 
     private Mono<String> tokenRequest(DownloadTarget requestTarget) {
         return client.get()
-            .uri(URI.create(requestTarget.url()))
+            .uri(URI.create(requestTarget.getUrl()))
             .accept(MediaType.ALL)
             .exchangeToMono(this::validate);
     }
 
     private Mono<String> normalRequest(DownloadTarget requestTarget) {
         return client.get()
-            .uri(URI.create(requestTarget.url()))
-            .header(HttpHeaders.AUTHORIZATION, requestTarget.token())
+            .uri(URI.create(requestTarget.getUrl()))
+            .header(HttpHeaders.AUTHORIZATION, requestTarget.getToken())
             .accept(MediaType.ALL)
             .exchangeToMono(this::validate);
     }
