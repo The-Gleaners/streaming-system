@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     id("com.github.davidmc24.gradle.plugin.avro") version "1.7.1"
     id("com.github.imflog.kafka-schema-registry-gradle-plugin")
@@ -40,6 +42,10 @@ schemaRegistry {
         subject("product", "FULL")
         subject("downloadTarget", "FULL")
     }
+}
+
+tasks.getByName<BootJar>("bootJar") {
+    enabled = false
 }
 
 tasks.named("jar") {
