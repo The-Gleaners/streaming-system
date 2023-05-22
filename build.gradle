@@ -55,6 +55,12 @@ subprojects {
     apply plugin: "org.ajoberstar.grgit"
     apply plugin: "com.avast.gradle.docker-compose"
 
+    repositories {
+        maven {
+            url = uri("https://packages.confluent.io/maven/")
+        }
+    }
+
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter")
