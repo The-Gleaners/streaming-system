@@ -5,6 +5,8 @@
   "fields": [
     { "name": "pipeId", "type": "string" },
     { "name": "url", "type": "string" },
-    { "name": "token", "type": "string" }
+    { "name": "token", "type": "string" },
+    { "name": "prevFileSize", "type": "long" },
+    { "name": "minAllowanceRate", "type": "int" }
   ]
 }

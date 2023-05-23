@@ -1,7 +1,6 @@
 package gleaners.usecase;
 
 import gleaners.avro.DownloadTarget;
-import gleaners.port.ProductSender;
 import gleaners.support.ReactiveKafkaIntegrationTests;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.mockwebserver.MockResponse;
@@ -54,7 +53,7 @@ class DownloadTaskTest extends ReactiveKafkaIntegrationTests {
 
 //        DownloadTask downloadTask = new DownloadTask(productSender, downloader);
 
-        DownloadTarget downloadTarget = new DownloadTarget("1", "https://www.naver.com", "test-token");
+        DownloadTarget downloadTarget = new DownloadTarget("1", "https://www.naver.com", "test-token", -1L, 0);
 
 
 //        downloadTask
