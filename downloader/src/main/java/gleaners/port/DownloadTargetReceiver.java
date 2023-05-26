@@ -21,10 +21,10 @@ public class DownloadTargetReceiver {
     private static final int MAX_ATTEMPTS = 3;
     private static final Duration MIN_BACKOFF = Duration.ofSeconds(2);
 
-    private final ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver;
+    private final ReactiveKafkaConsumerTemplate<String, DownloadTarget> receiver;
     private final DownloadTask downloadTask;
 
-    public DownloadTargetReceiver(ReactiveKafkaConsumerTemplate<Integer, DownloadTarget> receiver, DownloadTask downloadTask) {
+    public DownloadTargetReceiver(ReactiveKafkaConsumerTemplate<String, DownloadTarget> receiver, DownloadTask downloadTask) {
         this.receiver = receiver;
         this.downloadTask = downloadTask;
 
@@ -43,7 +43,7 @@ public class DownloadTargetReceiver {
                 .subscribe();
     }
 
-    private Mono<ReceiverRecord<Integer, DownloadTarget>> handleOnError(Throwable error) {
+    private Mono<ReceiverRecord<String, DownloadTarget>> handleOnError(Throwable error) {
         ReceiverRecordException ex = (ReceiverRecordException) error.getCause();
 
         log.error("Retries exhausted for : {}", ex.getRecord().value());
@@ -55,7 +55,7 @@ public class DownloadTargetReceiver {
         return Mono.empty();
     }
 
-    private Consumer<ReceiverRecord<Integer, DownloadTarget>> processReceiveMessage() {
+    private Consumer<ReceiverRecord<String, DownloadTarget>> processReceiveMessage() {
         return receiverRecord -> {
             ReceiverOffset offset = receiverRecord.receiverOffset();
 
