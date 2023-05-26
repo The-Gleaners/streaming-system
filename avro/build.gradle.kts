@@ -28,13 +28,13 @@ schemaRegistry {
     quiet.set(false)
 
     register.subject(
-            "gleaners.avro.Product",
+            "download-product-value",
             "avro/src/main/java/gleaners/avro/product.avsc",
             "AVRO"
     )
 
     register.subject(
-            "gleaners.avro.DownloadTarget",
+            "download-target-value",
             "avro/src/main/java/gleaners/avro/download_target.avsc",
             "AVRO")
 

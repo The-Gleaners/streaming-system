@@ -21,7 +21,6 @@ spring:
       on-profile: local
 
   kafka:
-    topic: test
     bootstrap-servers: localhost:9092
     properties:
       schema:
@@ -29,9 +28,11 @@ spring:
           url: http://localhost:8085
 
     producer:
+      topic: download-product
       acks: -1
 
     consumer:
+      topic: download-target
       group-id: reactive_consumer_group
       enable-auto-commit: false
       auto-commit-interval: 10
